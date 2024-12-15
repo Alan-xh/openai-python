@@ -1,83 +1,76 @@
-# OpenAI Python Library
+# OpenAI Python 库
 
-The OpenAI Python library provides convenient access to the OpenAI API
-from applications written in the Python language. It includes a
-pre-defined set of classes for API resources that initialize
-themselves dynamically from API responses which makes it compatible
-with a wide range of versions of the OpenAI API.
+OpenAI Python 库提供从用Python编写的应用程序方便访问OpenAI API的功能。它包含了一系列预定义的类，用于API资源，这些类可以根据API响应动态初始化，这使得它与广泛版本的OpenAI API兼容。
 
-You can find usage examples for the OpenAI Python library in our [API reference](https://beta.openai.com/docs/api-reference?lang=python) and the [OpenAI Cookbook](https://github.com/openai/openai-cookbook/).
+您可以在我们的[API参考](https://beta.openai.com/docs/api-reference?lang=python)和[OpenAI Cookbook](https://github.com/openai/openai-cookbook/)中找到OpenAI Python库的使用示例。
 
-## Installation
+## 安装
 
-You don't need this source code unless you want to modify the package. If you just
-want to use the package, just run:
+除非您想修改包，否则无需此源代码。如果您只想使用包，只需运行：
 
 ```sh
 pip install --upgrade openai
 ```
 
-Install from source with:
+从源代码安装：
 
 ```sh
 python setup.py install
 ```
 
-### Optional dependencies
+### 可选依赖
 
-Install dependencies for [`openai.embeddings_utils`](openai/embeddings_utils.py):
+安装[`openai.embeddings_utils`](openai/embeddings_utils.py)的依赖：
 
 ```sh
 pip install openai[embeddings]
 ```
 
-Install support for [Weights & Biases](https://wandb.me/openai-docs):
+安装[Weights & Biases](https://wandb.me/openai-docs)支持：
 
-```
+```sh
 pip install openai[wandb]
 ```
 
-Data libraries like `numpy` and `pandas` are not installed by default due to their size. They’re needed for some functionality of this library, but generally not for talking to the API. If you encounter a `MissingDependencyError`, install them with:
+由于其大小，数据库如`numpy`和`pandas`默认情况下不会安装。它们对于此库的某些功能是需要的，但通常不是与API通信所必需的。如果您遇到`MissingDependencyError`，请使用以下命令安装：
 
 ```sh
 pip install openai[datalib]
-````
+```
 
-## Usage
+## 使用
 
-The library needs to be configured with your account's secret key which is available on the [website](https://platform.openai.com/account/api-keys). Either set it as the `OPENAI_API_KEY` environment variable before using the library:
+库需要使用您的账户密钥进行配置，该密钥可以在[网站](https://platform.openai.com/account/api-keys)上找到。可以设置为环境变量`OPENAI_API_KEY`：
 
 ```bash
 export OPENAI_API_KEY='sk-...'
 ```
 
-Or set `openai.api_key` to its value:
+或者将`openai.api_key`设置为其值：
 
 ```python
 import openai
 openai.api_key = "sk-..."
 
-# list models
+# 列出模型
 models = openai.Model.list()
 
-# print the first model's id
+# 打印第一个模型的ID
 print(models.data[0].id)
 
-# create a completion
+# 创建一个完成
 completion = openai.Completion.create(model="ada", prompt="Hello world")
 
-# print the completion
+# 打印完成内容
 print(completion.choices[0].text)
 ```
 
+### 参数
+所有端点都有一个`.create`方法，支持`request_timeout`参数。此参数接受一个`Union[float, Tuple[float, float]]`，如果请求超出该时间（以秒为单位），将引发`openai.error.Timeout`错误（见：https://requests.readthedocs.io/en/latest/user/quickstart/#timeouts）。
 
-### Params
-All endpoints have a `.create` method that supports a `request_timeout` param.  This param takes a `Union[float, Tuple[float, float]]` and will raise an `openai.error.Timeout` error if the request exceeds that time in seconds (See: https://requests.readthedocs.io/en/latest/user/quickstart/#timeouts).
+### Microsoft Azure 端点
 
-### Microsoft Azure Endpoints
-
-In order to use the library with Microsoft Azure endpoints, you need to set the `api_type`, `api_base` and `api_version` in addition to the `api_key`. The `api_type` must be set to 'azure' and the others correspond to the properties of your endpoint.
-In addition, the deployment name must be passed as the engine parameter.
+为了使用Microsoft Azure端点，您需要额外设置`api_type`、`api_base`和`api_version`，除了`api_key`。`api_type`必须设置为'azure'，其他参数对应您端点的属性。此外，部署名称必须作为engine参数传递。
 
 ```python
 import openai
@@ -86,33 +79,32 @@ openai.api_key = "..."
 openai.api_base = "https://example-endpoint.openai.azure.com"
 openai.api_version = "2023-03-15-preview"
 
-# create a completion
+# 创建一个完成
 completion = openai.Completion.create(deployment_id="deployment-name", prompt="Hello world")
 
-# print the completion
+# 打印完成内容
 print(completion.choices[0].text)
 ```
 
-Please note that for the moment, the Microsoft Azure endpoints can only be used for completion, embedding, and fine-tuning operations.
-For a detailed example of how to use fine-tuning and other operations using Azure endpoints, please check out the following Jupyter notebooks:
-* [Using Azure completions](https://github.com/openai/openai-cookbook/tree/main/examples/azure/completions.ipynb)
-* [Using Azure fine-tuning](https://github.com/openai/openai-cookbook/tree/main/examples/azure/finetuning.ipynb)
-* [Using Azure embeddings](https://github.com/openai/openai-cookbook/blob/main/examples/azure/embeddings.ipynb)
+请注意，目前，Microsoft Azure端点只能用于完成、嵌入和微调操作。
+有关如何使用Azure端点进行微调和其他操作的详细示例，请查看以下Jupyter笔记本：
+* [使用Azure完成](https://github.com/openai/openai-cookbook/tree/main/examples/azure/completions.ipynb)
+* [使用Azure微调](https://github.com/openai/openai-cookbook/tree/main/examples/azure/finetuning.ipynb)
+* [使用Azure嵌入](https://github.com/openai/openai-cookbook/blob/main/examples/azure/embeddings.ipynb)
 
-### Microsoft Azure Active Directory Authentication
+### Microsoft Azure Active Directory 认证
 
-In order to use Microsoft Active Directory to authenticate to your Azure endpoint, you need to set the `api_type` to "azure_ad" and pass the acquired credential token to `api_key`. The rest of the parameters need to be set as specified in the previous section.
-
+为了使用Microsoft Active Directory来认证您的Azure端点，您需要将`api_type`设置为"azure_ad"，并将获取的凭证令牌传递给`api_key`。其余参数需要按照上一节中指定的设置。
 
 ```python
 from azure.identity import DefaultAzureCredential
 import openai
 
-# Request credential
+# 请求凭证
 default_credential = DefaultAzureCredential()
 token = default_credential.get_token("https://cognitiveservices.azure.com/.default")
 
-# Setup parameters
+# 设置参数
 openai.api_type = "azure_ad"
 openai.api_key = token.token
 openai.api_base = "https://example-endpoint.openai.azure.com/"
@@ -120,175 +112,167 @@ openai.api_version = "2023-03-15-preview"
 
 # ...
 ```
-### Command-line interface
 
-This library additionally provides an `openai` command-line utility
-which makes it easy to interact with the API from your terminal. Run
-`openai api -h` for usage.
+### 命令行界面
+
+此库还提供了一个`openai`命令行工具，使得从终端与API交互变得简单。运行`openai api -h`查看用法。
 
 ```sh
-# list models
+# 列出模型
 openai api models.list
 
-# create a completion
+# 创建一个完成
 openai api completions.create -m ada -p "Hello world"
 
-# create a chat completion
+# 创建一个对话完成
 openai api chat_completions.create -m gpt-3.5-turbo -g user "Hello world"
 
-# generate images via DALL·E API
+# 通过DALL·E API生成图像
 openai api image.create -p "two dogs playing chess, cartoon" -n 1
 ```
 
-## Example code
+## 示例代码
 
-Examples of how to use this Python library to accomplish various tasks can be found in the [OpenAI Cookbook](https://github.com/openai/openai-cookbook/). It contains code examples for:
+如何使用此Python库完成各种任务的示例可以在[OpenAI Cookbook](https://github.com/openai/openai-cookbook/)中找到。它包含以下代码示例：
 
-* Classification using fine-tuning
-* Clustering
-* Code search
-* Customizing embeddings
-* Question answering from a corpus of documents
-* Recommendations
-* Visualization of embeddings
-* And more
+* 使用微调进行分类
+* 聚类
+* 代码搜索
+* 自定义嵌入
+* 从文档语料库中回答问题
+* 推荐
+* 嵌入可视化
+* 等等
 
-Prior to July 2022, this OpenAI Python library hosted code examples in its examples folder, but since then all examples have been migrated to the [OpenAI Cookbook](https://github.com/openai/openai-cookbook/).
+在2022年7月之前，此OpenAI Python库的示例文件夹中托管了代码示例，但自那以后所有示例都已迁移到[OpenAI Cookbook](https://github.com/openai/openai-cookbook/)。
 
-### Chat
+### 聊天
 
-Conversational models such as `gpt-3.5-turbo` can be called using the chat completions endpoint.
+像`gpt-3.5-turbo`这样的对话模型可以通过对话完成端点调用。
 
 ```python
 import openai
-openai.api_key = "sk-..."  # supply your API key however you choose
+openai.api_key = "sk-..."  # 以您选择的方式提供API密钥
 
 completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=[{"role": "user", "content": "Hello world!"}])
 print(completion.choices[0].message.content)
 ```
 
-### Embeddings
+### 嵌入
 
-In the OpenAI Python library, an embedding represents a text string as a fixed-length vector of floating point numbers. Embeddings are designed to measure the similarity or relevance between text strings.
+在OpenAI Python库中，嵌入表示将文本字符串表示为固定长度的浮点数向量。嵌入旨在测量文本字符串之间的相似性或相关性。
 
-To get an embedding for a text string, you can use the embeddings method as follows in Python:
+要获取一个文本字符串的嵌入，您可以像以下Python示例一样使用嵌入方法：
 
 ```python
 import openai
-openai.api_key = "sk-..."  # supply your API key however you choose
+openai.api_key = "sk-..."  # 以您选择的方式提供API密钥
 
-# choose text to embed
+# 选择要嵌入的文本
 text_string = "sample text"
 
-# choose an embedding
+# 选择一个嵌入模型
 model_id = "text-similarity-davinci-001"
 
-# compute the embedding of the text
+# 计算文本的嵌入
 embedding = openai.Embedding.create(input=text_string, model=model_id)['data'][0]['embedding']
 ```
 
-An example of how to call the embeddings method is shown in this [get embeddings notebook](https://github.com/openai/openai-cookbook/blob/main/examples/Get_embeddings.ipynb).
+如何调用嵌入方法的示例可以在[获取嵌入笔记本](https://github.com/openai/openai-cookbook/blob/main/examples/Get_embeddings.ipynb)中找到。
 
-Examples of how to use embeddings are shared in the following Jupyter notebooks:
+使用嵌入的示例在以下Jupyter笔记本中共享：
 
-- [Classification using embeddings](https://github.com/openai/openai-cookbook/blob/main/examples/Classification_using_embeddings.ipynb)
-- [Clustering using embeddings](https://github.com/openai/openai-cookbook/blob/main/examples/Clustering.ipynb)
-- [Code search using embeddings](https://github.com/openai/openai-cookbook/blob/main/examples/Code_search.ipynb)
-- [Semantic text search using embeddings](https://github.com/openai/openai-cookbook/blob/main/examples/Semantic_text_search_using_embeddings.ipynb)
-- [User and product embeddings](https://github.com/openai/openai-cookbook/blob/main/examples/User_and_product_embeddings.ipynb)
-- [Zero-shot classification using embeddings](https://github.com/openai/openai-cookbook/blob/main/examples/Zero-shot_classification_with_embeddings.ipynb)
-- [Recommendation using embeddings](https://github.com/openai/openai-cookbook/blob/main/examples/Recommendation_using_embeddings.ipynb)
+- [使用嵌入进行分类](https://github.com/openai/openai-cookbook/blob/main/examples/Classification_using_embeddings.ipynb)
+- [使用嵌入进行聚类](https://github.com/openai/openai-cookbook/blob/main/examples/Clustering.ipynb)
+- [使用嵌入进行代码搜索](https://github.com/openai/openai-cookbook/blob/main/examples/Code_search.ipynb)
+- [使用嵌入进行语义文本搜索](https://github.com/openai/openai-cookbook/blob/main/examples/Semantic_text_search_using_embeddings.ipynb)
+- [用户和产品嵌入](https://github.com/openai/openai-cookbook/blob/main/examples/User_and_product_embeddings.ipynb)
+- [使用嵌入进行零样本分类](https://github.com/openai/openai-cookbook/blob/main/examples/Zero-shot_classification_with_embeddings.ipynb)
+- [使用嵌入进行推荐](https://github.com/openai/openai-cookbook/blob/main/examples/Recommendation_using_embeddings.ipynb)
 
-For more information on embeddings and the types of embeddings OpenAI offers, read the [embeddings guide](https://beta.openai.com/docs/guides/embeddings) in the OpenAI documentation.
+有关嵌入和OpenAI提供的嵌入类型更多信息，请阅读[嵌入指南](https://beta.openai.com/docs/guides/embeddings)。
 
-### Fine-tuning
+### 微调
 
-Fine-tuning a model on training data can both improve the results (by giving the model more examples to learn from) and reduce the cost/latency of API calls (chiefly through reducing the need to include training examples in prompts).
+通过在训练数据上微调模型，可以同时提高结果（通过为模型提供更多学习示例）并降低API调用的成本/延迟（主要通过减少在提示中包含训练示例的需求）。
 
-Examples of fine-tuning are shared in the following Jupyter notebooks:
+微调的示例在以下Jupyter笔记本中共享：
 
-- [Classification with fine-tuning](https://github.com/openai/openai-cookbook/blob/main/examples/Fine-tuned_classification.ipynb) (a simple notebook that shows the steps required for fine-tuning)
-- Fine-tuning a model that answers questions about the 2020 Olympics
-  - [Step 1: Collecting data](https://github.com/openai/openai-cookbook/blob/main/examples/fine-tuned_qa/olympics-1-collect-data.ipynb)
-  - [Step 2: Creating a synthetic Q&A dataset](https://github.com/openai/openai-cookbook/blob/main/examples/fine-tuned_qa/olympics-2-create-qa.ipynb)
-  - [Step 3: Train a fine-tuning model specialized for Q&A](https://github.com/openai/openai-cookbook/blob/main/examples/fine-tuned_qa/olympics-3-train-qa.ipynb)
+- [使用微调进行分类](https://github.com/openai/openai-cookbook/blob/main/examples/Fine-tuned_classification.ipynb)（一个简单的笔记本，展示了微调所需的步骤）
+- 微调一个回答有关2020年奥运会问题的模型
+  - [步骤1：收集数据](https://github.com/openai/openai-cookbook/blob/main/examples/fine-tuned_qa/olympics-1-collect-data.ipynb)
+  - [步骤2：创建一个合成的Q&A数据集](https://github.com/openai/openai-cookbook/blob/main/examples/fine-tuned_qa/olympics-2-create-qa.ipynb)
+  - [步骤3：训练一个专门用于Q&A的微调模型](https://github.com/openai/openai-cookbook/blob/main/examples/fine-tuned_qa/olympics-3-train-qa.ipynb)
 
-Sync your fine-tunes to [Weights & Biases](https://wandb.me/openai-docs) to track experiments, models, and datasets in your central dashboard with:
+将您的微调同步到[Weights & Biases](https://wandb.me/openai-docs)以便在您的中央仪表板上跟踪实验、模型和数据集：
 
 ```bash
 openai wandb sync
 ```
 
-For more information on fine-tuning, read the [fine-tuning guide](https://beta.openai.com/docs/guides/fine-tuning) in the OpenAI documentation.
+有关微调的更多信息，请阅读[微调指南](https://beta.openai.com/docs/guides/fine-tuning)。
 
-### Moderation
+### 内容审核
 
-OpenAI provides a Moderation endpoint that can be used to check whether content complies with the OpenAI [content policy](https://platform.openai.com/docs/usage-policies)
+OpenAI提供了一个Moderation端点，可以用来检查内容是否符合OpenAI [内容政策](https://platform.openai.com/docs/usage-policies)
 
 ```python
 import openai
-openai.api_key = "sk-..."  # supply your API key however you choose
+openai.api_key = "sk-..."  # 以您选择的方式提供API密钥
 
 moderation_resp = openai.Moderation.create(input="Here is some perfectly innocuous text that follows all OpenAI content policies.")
 ```
 
-See the [moderation guide](https://platform.openai.com/docs/guides/moderation) for more details.
+更多详情请见[审核指南](https://platform.openai.com/docs/guides/moderation)。
 
-## Image generation (DALL·E)
+## 图像生成 (DALL·E)
 
 ```python
 import openai
-openai.api_key = "sk-..."  # supply your API key however you choose
+openai.api_key = "sk-..."  # 以您选择的方式提供API密钥
 
 image_resp = openai.Image.create(prompt="two dogs playing chess, oil painting", n=4, size="512x512")
-
 ```
 
-## Audio transcription (Whisper)
+## 音频转录 (Whisper)
 ```python
 import openai
-openai.api_key = "sk-..."  # supply your API key however you choose
+openai.api_key = "sk-..."  # 以您选择的方式提供API密钥
 f = open("path/to/file.mp3", "rb")
 transcript = openai.Audio.transcribe("whisper-1", f)
-
 ```
 
-## Async API
+## 异步API
 
-Async support is available in the API by prepending `a` to a network-bound method:
+通过在网络绑定方法前添加`a`，可以使用异步支持：
 
 ```python
 import openai
-openai.api_key = "sk-..."  # supply your API key however you choose
+openai.api_key = "sk-..."  # 以您选择的方式提供API密钥
 
 async def create_completion():
     completion_resp = await openai.Completion.acreate(prompt="This is a test", model="davinci")
-
 ```
 
-To make async requests more efficient, you can pass in your own
-``aiohttp.ClientSession``, but you must manually close the client session at the end 
-of your program/event loop:
+为了使异步请求更高效，您可以传入您自己的 `aiohttp.ClientSession`，但您必须在程序/事件循环结束时手动关闭客户端会话：
 
 ```python
 import openai
 from aiohttp import ClientSession
 
 openai.aiosession.set(ClientSession())
-# At the end of your program, close the http session
+# 在程序结束时，关闭http会话
 await openai.aiosession.get().close()
 ```
 
-See the [usage guide](https://platform.openai.com/docs/guides/images) for more details.
+更多详情请见[使用指南](https://platform.openai.com/docs/guides/images)。
 
-## Requirements
+## 要求
 
 - Python 3.7.1+
 
-In general, we want to support the versions of Python that our
-customers are using. If you run into problems with any version
-issues, please let us know on our [support page](https://help.openai.com/en/).
+一般来说，我们希望支持我们的客户使用的Python版本。如果您遇到任何版本问题，请在我们的[支持页面](https://help.openai.com/en/)上告知我们。
 
-## Credit
+## 致谢
 
-This library is forked from the [Stripe Python Library](https://github.com/stripe/stripe-python).
+此库是基于[Stripe Python库](https://github.com/stripe/stripe-python)的分支。
